@@ -36,6 +36,12 @@ jobs:
             exit 1
           fi
 
+      - name: Show working directory and files
+        run: |
+          pwd
+          ls -l
+
+
       - name: Install dependencies
         run: make install
 
