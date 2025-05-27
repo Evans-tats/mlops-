@@ -1,6 +1,13 @@
 name: Python CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -8,6 +15,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -20,15 +28,30 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+
+      - name: Validate requirements file
+        run: |
+          if [ ! -f requirements.txt ]; then
+            echo "requirements.txt file not found!"
+            exit 1
+          fi
 
       - name: Install dependencies
         run: make install
 
       - name: Analysing the code with pylint
-        run: make lint
+        run: |
+          if ! make lint; then
+            echo "Linting failed!"
+            exit 1
+          fi
 
       - name: Test
-        run: make test
+        run: |
+          if ! make test; then
+            echo "Tests failed!"
+            exit 1
+          fi
