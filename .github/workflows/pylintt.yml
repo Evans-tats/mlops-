@@ -42,8 +42,6 @@ jobs:
           ls -l
 
 
-      - name: Install dependencies
-        run: make install
 
       - name: Analysing the code with pylint
         run: |
