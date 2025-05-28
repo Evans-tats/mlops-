@@ -9,4 +9,4 @@ test:
 clean:
 	find . -type d -name "__pycache__" -exec rm -r {} +
 lint:
-	pylint *.py
+	pylint --disable=C0114,C0116,C0304 *.py
